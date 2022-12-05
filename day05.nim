@@ -18,7 +18,6 @@ proc parseFile (path: string): (seq[string], seq[string]) =
   return (contents[0], contents[1])
 
 
-
 proc stacksFromLayout(crateLayout: seq[string]): seq[seq[char]] =
   var stacks = newSeqWith(10, newSeq[char]())
   let lines = reversed(crateLayout)
@@ -41,7 +40,7 @@ proc updatedStacksByInstructions(
 ): seq[seq[char]] =
 
   var ops: seq[int]
-  var amount, source, dest: int
+  var amount, source, dest, stackIndex: int
 
   for line in instructions:
     if len(line) > 0:
@@ -53,12 +52,13 @@ proc updatedStacksByInstructions(
       if part == 2:
         for _ in 1..amount:
           stacks[0].add(stacks[source].pop())
+        stackIndex = 0
 
-        for _ in 1..amount:
-          stacks[dest].add(stacks[0].pop())
       else:
-        for _ in 1..amount:
-          stacks[dest].add(stacks[source].pop())
+        stackIndex = source
+
+      for _ in 1..amount:
+        stacks[dest].add(stacks[stackIndex].pop())
 
   return stacks
 
@@ -79,8 +79,10 @@ let (crateLayout, instructions) = parseFile("05.txt")
 var p1stacks = stacksFromLayout(crateLayout)
 var p2stacks = deepCopy(p1stacks)
 
+# part 1
 p1stacks = updatedStacksByInstructions(p1stacks, instructions, 1)
 echo stringFromStackTops(p1stacks)
 
+# part 2
 p2stacks = updatedStacksByInstructions(p2stacks, instructions, 2)
 echo stringFromStackTops(p2stacks)
