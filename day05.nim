@@ -11,7 +11,7 @@ iterator parseCrate(line: string): char =
     i += 4
 
 
-proc parseFile (path: string): (seq[string], seq[string]) =
+proc parseFile(path: string): (seq[string], seq[string]) =
   let f = open(path)
   defer: f.close()
   let contents = f.readAll().split("\n\n").map(text => text.splitlines())
@@ -33,18 +33,19 @@ proc stacksFromLayout(crateLayout: seq[string]): seq[seq[char]] =
   return stacks
 
 
-proc updatedStacksByInstructions(
+proc stringFromStackTops(
   stacks: var seq[seq[char]],
   instructions: seq[string],
   part: int
-): seq[seq[char]] =
+): string =
 
   var ops: seq[int]
   var amount, source, dest, stackIndex: int
 
+  # updating stack by instructions
   for line in instructions:
     if len(line) > 0:
-      ops = findAll(line, re"\d+").map(d => parseInt(d))
+      ops = findAll(line, re"\d+").map(parseInt)
       amount = ops[0]
       source = ops[1]
       dest   = ops[2]
@@ -60,18 +61,16 @@ proc updatedStacksByInstructions(
       for _ in 1..amount:
         stacks[dest].add(stacks[stackIndex].pop())
 
-  return stacks
-
-
-proc stringFromStackTops(stacks: var seq[seq[char]]): string =
   var letters: string
   var length:  int
 
+  # concatenating letters from top of the stacks
   for i in 1..<len(stacks):
     length = len(stacks[i])
     if length == 0:
       break
     letters &= stacks[i][length - 1]
+
   return letters
 
 
@@ -80,9 +79,7 @@ var p1stacks = stacksFromLayout(crateLayout)
 var p2stacks = deepCopy(p1stacks)
 
 # part 1
-p1stacks = updatedStacksByInstructions(p1stacks, instructions, 1)
-echo stringFromStackTops(p1stacks)
+echo stringFromStackTops(p1stacks, instructions, 1)
 
 # part 2
-p2stacks = updatedStacksByInstructions(p2stacks, instructions, 2)
-echo stringFromStackTops(p2stacks)
+echo stringFromStackTops(p2stacks, instructions, 2)
