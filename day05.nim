@@ -1,8 +1,8 @@
-import sugar
-import strutils
-import re
-import algorithm
-import sequtils
+import std/sugar
+import std/strutils
+import std/re
+import std/algorithm
+import std/sequtils
 
 iterator parseCrate(line: string): char =
   var i = 1
