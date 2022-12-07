@@ -1,18 +1,16 @@
 cwd  = []
 seen = []
-_, *data = map(str.splitlines, open("07test.txt").read().split("$ "))
+_, *data = map(str.splitlines, open("07.txt").read().split("$ "))
 
-for instruction in data:
-    command, *rest = instruction
-
-    if rest: # ls
-        for f in rest:
-            n, _ = f.split() # e.g 29116 f or `dir bla` (file/ dir names don't matter)
-            if n != 'dir':
+for command, *rest in data:
+    if rest: # ls. could also just check eq on command
+        for ls_output in rest:
+            size_or_dir, _name = ls_output.split() # e.g `8033020 d.log` or `dir stuff` (file/ dir names don't matter)
+            if size_or_dir != 'dir':
                 for i in range(len(cwd)):
-                    cwd[i] += int(n)
-    else: # cd, could also just check eq on command
-        _, dest = command.split() # cd / -> dest='/'
+                    cwd[i] += int(size_or_dir) # file here means +file-size for all nodes up the tree
+    else: # cd
+        _cd, dest = command.split() # `cd /` -> dest='/'
         if dest == '..':
             seen.append(cwd.pop())
         else:
@@ -20,7 +18,8 @@ for instruction in data:
 seen.extend(reversed(cwd))
 
 print(sum(x for x in seen if x <= 100000)) # p1
-#                total    - outermost
-leftover_space = 70000000 - seen[-1]
+
+outermost = seen[-1]
+leftover_space = 70000000 - outermost
 needed_space = 30000000 - leftover_space
 print(next(x for x in seen if x >= needed_space)) # p2
