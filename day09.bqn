@@ -23,5 +23,5 @@ TailTrails ← {
     }` head
 }
 
-•Show ≠⍷(<0‿0) TailTrails    heads  # p1
+•Show ≠⍷(<0‿0) TailTrails     heads  # p1
 •Show ≠⍷(<0‿0) TailTrails ⍟9 heads  # p1
