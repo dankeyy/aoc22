@@ -7,6 +7,7 @@ Directions ← {
     "L": ⟨¯1,  0 ⟩;
     "R": ⟨ 1,  0 ⟩
 }
+
 heads ← +` ∾ { ⟨d, n⟩: n / ⋈ Directions d } ¨ ops
 
 TailTrails ← {
@@ -17,10 +18,10 @@ TailTrails ← {
         {
             ∧´ (2 > |delta)
             ? tail
-            ; tail + ×delta  # neg ? -1 to tail : pos ? 1 to tail, using × as signum
+            ; tail + ×delta  # using × as signum
         }
     }` head
 }
 
-•Show ≠⍷(<0‿0) TailTrails   heads   # p1
+•Show ≠⍷(<0‿0) TailTrails    heads  # p1
 •Show ≠⍷(<0‿0) TailTrails ⍟9 heads  # p1
