@@ -11,8 +11,7 @@ Directions ← {
 heads ← +` ∾ { ⟨d, n⟩: n / ⋈ Directions d } ¨ ops
 
 TailTrails ← {
-  tail𝕊head:
-    tail {
+     𝕨 {
         tail𝕊head:
         delta ← head - tail
         {
@@ -20,7 +19,7 @@ TailTrails ← {
             ? tail
             ; tail + ×delta  # using × as signum
         }
-    }` head
+    }` 𝕩
 }
 
 •Show ≠⍷(<0‿0) TailTrails     heads  # p1
