@@ -15,16 +15,6 @@
 (defvar monkeys-prod 1)
 
 
-;; parsing helper macro
-(defmacro advance-and-parse-into (var keyword parser)
-  `(progn
-     (setq start (+ end 1))
-     (setq end (or (position #\Newline text :start start) (length text)))
-     (setq ,var (funcall ,parser (subseq text
-                                         (+ (search ,keyword text :start2 start :end2 end)
-                                            (length ,keyword))
-                                         end)))))
-
 ;; parsers
 (defun parse-items (s)
   (let ((items (mapcar #'parse-integer (split-string s ", "))))
@@ -38,6 +28,16 @@
   (destructuring-bind (op1 op op3) (split-string operation-parts " ")
     `(,(intern op) ,(read-from-string op1) ,(read-from-string op3))))
 
+
+;; parsing helper
+(defmacro advance-and-parse-into (var keyword parser)
+  `(progn
+     (setq start (+ end 1))
+     (setq end (or (position #\Newline text :start start) (length text)))
+     (setq ,var (funcall ,parser (subseq text
+                                         (+ (search ,keyword text :start2 start :end2 end)
+                                            (length ,keyword))
+                                         end)))))
 
 (defun parse-monkey (text divide-by-3?)
   (let
@@ -80,13 +80,7 @@
         collect (parse-monkey monkey-text divide-by-3?)))
 
 
-;; solve
-(defvar *file-contents* nil)
-(with-open-file (stream "11test.txt")
-  (let ((contents (make-string (file-length stream))))
-    (read-sequence contents stream)
-    (setf *file-contents* contents)))
-
+;; main loop
 (defun monkeys-after-n-rounds (monkeys rounds)
   (let* ((inspection-result nil)
          (pass-item-to nil)
@@ -107,22 +101,19 @@
     monkeys))
 
 
-(defun mul-max-two-inspected (monkeys)
-  (loop for monkey in monkeys
-        collect (slot-value monkey 'inspected) into inspected-values
-        finally (return (reduce #'* (subseq (sort inspected-values #'>) 0 2)))))
-
-
-(defun solve (&key (filename "11test.txt") (rounds 20) (divide-by-3? t) (return-monkeys? nil))
+(defun solve (&key (filename "11test.txt") (rounds 20) (divide-by-3? t))
   (with-open-file (stream filename)
     (let* ((monkeys nil)
            (text (make-string (file-length stream))))
       (read-sequence text stream)
       (setf monkeys (parse-monkeys text divide-by-3?))
       (setf monkeys (monkeys-after-n-rounds monkeys rounds))
-      (if return-monkeys?
-          monkeys
-          (mul-max-two-inspected monkeys)))))
+
+      ;; multiply two most inspected values
+      (loop for monkey in monkeys
+        collect (slot-value monkey 'inspected) into inspected-values
+        finally (return (reduce #'* (subseq (sort inspected-values #'>) 0 2)))))))
+
 
 ;; part 1:
 ;; (solve :filename "11.txt")
