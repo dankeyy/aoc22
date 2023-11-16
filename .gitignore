@@ -1,2 +1,5 @@
 .project
 *.txt
+*fasl
+*.o
+quicklisp.lisp
